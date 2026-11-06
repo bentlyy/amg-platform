@@ -1,4 +1,4 @@
-import { AppError } from '@amg/core';
+import { AppError } from '../shared/http.js';
 import { TransferProvider } from './transfer.js';
 import { StripeProvider } from './stripe.js';
 import { MercadoPagoProvider } from './mercadopago.js';

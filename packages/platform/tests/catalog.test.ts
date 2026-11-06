@@ -1,7 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { readFileSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
-import { CATALOG, EXPECTED_SLUGS, EXTERNAL_SLUGS, PLATFORM_URL, RETIRED_SLUGS, seedCatalog } from '../src/seed.js';
+import { CATALOG, EXPECTED_SLUGS, PLATFORM_URL, RETIRED_SLUGS, seedCatalog } from '../src/seed.js';
 import { listProducts, findProductBySlug } from '../src/domain/products.js';
 
 /**
@@ -121,41 +119,6 @@ describe('siembra del catálogo', () => {
     expect(citas?.app_url).toBe('https://citas.amgdeveloper.cl');
     const espacios = findProductBySlug('espacios');
     expect(espacios?.app_url).toBe('https://espacios.amgdeveloper.cl');
-  });
-
-  it('el catalogo y el compose dan el mismo host para los productos internos', () => {
-    // Este es el guard que hacia falta. El `app_url` del Core y el `APP_URL`
-    // del compose son dos valores escritos a mano que tienen que coincidir, y
-    // cuando no coinciden el sintoma es un login que manda a un host que no
-    // existe: el producto responde, el navegador no muestra nada, y el
-    // redirect_uri guardado en el Core no es el que el producto escucha.
-    const compose = readFileSync(
-      fileURLToPath(new URL('../../../docker-compose.yml', import.meta.url)),
-      'utf8',
-    );
-
-    const appUrlDeCompose = new Map<string, string>();
-    let servicio = '';
-    for (const linea of compose.split('\n')) {
-      const encajaServicio = /^ {2}([a-z]+):\s*$/.exec(linea);
-      if (encajaServicio) servicio = encajaServicio[1];
-      const encajaUrl = /APP_URL:\s*https:\/\/([a-z-]+)\.amgdeveloper\.cl/.exec(linea);
-      if (encajaUrl && servicio) appUrlDeCompose.set(servicio, encajaUrl[1]);
-    }
-
-    for (const p of CATALOG) {
-      // Los externos (hoy: taller) no viven en este compose: su subdominio y su
-      // base los enruta su propio despliegue. El guard aplica a los internos.
-      if (EXTERNAL_SLUGS.includes(p.slug)) continue;
-      expect(
-        appUrlDeCompose.get(p.slug),
-        `el compose no declara APP_URL para ${p.slug}`,
-      ).toBeDefined();
-      expect(
-        new URL(p.appUrl).hostname.split('.')[0],
-        `${p.slug}: el catalogo y el compose apuntan a hosts distintos`,
-      ).toBe(appUrlDeCompose.get(p.slug));
-    }
   });
 
   it('es idempotente: sembrar dos veces no duplica', () => {

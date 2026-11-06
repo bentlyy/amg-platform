@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import rateLimit from 'express-rate-limit';
 import { z } from 'zod';
-import { AppError, asyncHandler } from '@amg/core';
+import { AppError, asyncHandler } from '../shared/http.js';
 import { authRequired, requireRole } from './middleware.js';
 import {
   getOrganizationProducts,

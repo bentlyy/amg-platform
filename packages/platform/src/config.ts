@@ -44,8 +44,8 @@ const avisados = new Set<string>();
 // reinicios frecuentes conviene tener el .env a mano.
 const ephemeral = (name: string, bytes = 48) => {
   const value = randomBytes(bytes).toString('hex');
-  // A proposito `console` y no el `logger` de @amg/core: la config del Core
-  // central no deberia depender del core de los mini-SaaS para arrancar.
+  // A proposito `console` y no el logger compartido: la config del Core
+  // central no deberia depender de modulos de la app para arrancar.
   // Se avisa una sola vez, aunque falten los dos secretos.
   if (!avisados.has(name)) {
     avisados.add(name);

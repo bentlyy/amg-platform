@@ -1,5 +1,5 @@
 import { asc, eq } from 'drizzle-orm';
-import { AppError } from '@amg/core';
+import { AppError } from '../shared/http.js';
 import { getCoreDb } from '../db/index.js';
 import { schema } from '../db/schema.js';
 import { periodPrice, yearlySavings } from '../billing/period.js';

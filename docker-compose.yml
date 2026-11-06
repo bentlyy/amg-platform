@@ -1,0 +1,38 @@
+name: amg-platform
+
+services:
+  platform:
+    build: .
+    container_name: amg-platform
+    restart: unless-stopped
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    ports:
+      - "127.0.0.1:3108:3000"
+    volumes:
+      - amg_platform_data_core:/app/data/core
+    environment:
+      NODE_ENV: production
+      PORT: "3000"
+      CORE_PORT: "3000"
+      CORE_DB_PATH: /app/data/core/core.sqlite
+      CORE_URL: ${CORE_URL:?falta CORE_URL en .env}
+      AMG_SESSION_SECRET: ${AMG_SESSION_SECRET:?falta AMG_SESSION_SECRET en .env}
+      AMG_SSO_ROOT_SECRET: ${AMG_SSO_ROOT_SECRET:?falta AMG_SSO_ROOT_SECRET en .env}
+      CORE_RETURN_URL_HOSTS: ${CORE_RETURN_URL_HOSTS:-amgdeveloper.cl,www.amgdeveloper.cl,localhost}
+      APP_NAME: ${APP_NAME:-AMG}
+      SMTP_HOST: ${SMTP_HOST:-}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASS: ${SMTP_PASS:-}
+      MAIL_FROM: ${MAIL_FROM:-no-reply@amgdeveloper.cl}
+      CONTACT_EMAIL: ${CONTACT_EMAIL:-hola@amgdeveloper.cl}
+      MERCADOPAGO_ACCESS_TOKEN: ${MERCADOPAGO_ACCESS_TOKEN:-}
+      MERCADOPAGO_WEBHOOK_SECRET: ${MERCADOPAGO_WEBHOOK_SECRET:-}
+      MERCADOPAGO_MODE: ${MERCADOPAGO_MODE:-production}
+
+volumes:
+  amg_platform_data_core:

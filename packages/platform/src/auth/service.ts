@@ -1,4 +1,4 @@
-import { AppError } from '@amg/core';
+import { AppError } from '../shared/http.js';
 import { platformConfig } from '../config.js';
 import { getCoreDb } from '../db/index.js';
 import { hashPassword, verifyPassword, registerPasswordSchema } from './passwords.js';

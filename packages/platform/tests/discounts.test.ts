@@ -1,6 +1,6 @@
 import { createHmac } from 'node:crypto';
 import { beforeEach, describe, expect, it } from 'vitest';
-import { AppError } from '@amg/core';
+import { AppError } from '../src/shared/http.js';
 import { confirmCheckout, startCheckout } from '../src/billing/checkout.js';
 import { registrarProveedor } from '../src/billing/index.js';
 import type {

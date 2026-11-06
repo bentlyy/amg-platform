@@ -1,0 +1,24 @@
+{
+  "name": "amg-platform",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev -w @amg/landing",
+    "dev:api": "npm run dev -w @amg/platform",
+    "build": "npm run build -w @amg/auth-client && npm run build -w @amg/platform && npm run build -w @amg/landing",
+    "start": "npm run start -w @amg/landing",
+    "seed": "npm run seed -w @amg/platform",
+    "sso:secret": "npm run sso:secret -w @amg/platform --",
+    "billing:confirm": "npm run billing:confirm -w @amg/platform --",
+    "discounts": "npm run discounts -w @amg/platform --",
+    "bootstrap": "npm run bootstrap -w @amg/platform --",
+    "test": "npm run test --workspaces --if-present",
+    "typecheck": "npm run typecheck --workspaces --if-present"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

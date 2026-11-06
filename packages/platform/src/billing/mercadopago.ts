@@ -1,5 +1,5 @@
 import { createHmac, randomUUID, timingSafeEqual } from 'node:crypto';
-import { AppError } from '@amg/core';
+import { AppError } from '../shared/http.js';
 import type { BillingProvider, CheckoutRequest, CheckoutResult, PaymentConfirmation } from './types.js';
 
 const MP_API = 'https://api.mercadopago.com';

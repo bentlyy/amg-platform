@@ -1,4 +1,4 @@
-import { AppError } from '@amg/core';
+import { AppError } from '../shared/http.js';
 import { obtenerProveedor } from './index.js';
 import type { BillingProviderName, CheckoutResult } from './types.js';
 import {

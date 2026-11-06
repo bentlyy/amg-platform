@@ -1,5 +1,6 @@
 import type { NextFunction, Request, Response } from 'express';
-import { AppError, asyncHandler, cookieParser } from '@amg/core';
+import { AppError, asyncHandler } from '../shared/http.js';
+import { cookieParser } from '../shared/cookies.js';
 import { platformConfig } from '../config.js';
 import {
   switchOrganization,

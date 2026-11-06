@@ -1,9 +1,17 @@
 {
   "name": "@amg/auth-client",
   "version": "0.1.0",
-  "private": true,
+  "private": false,
   "type": "module",
   "description": "Cliente de identidad de AMG para los subdominios: verifica el token del Core, canjea el codigo SSO, redirige al login central y expone user_id / organization_id / rol. NO tiene usuarios ni contrasenas propias.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bentlyy/amg-platform.git"
+  },
+  "license": "UNLICENSED",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
   "main": "./dist-cjs/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",

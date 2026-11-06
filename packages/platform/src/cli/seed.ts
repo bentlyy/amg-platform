@@ -1,4 +1,4 @@
-import { logger } from '@amg/core';
+import { logger } from '../shared/logger.js';
 import { getCoreDb } from '../db/init.js';
 import { seedCatalog } from '../seed.js';
 import { listSsoClients } from '../sso/registry.js';

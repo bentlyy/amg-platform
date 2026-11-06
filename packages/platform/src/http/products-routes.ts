@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { asyncHandler } from '@amg/core';
+import { asyncHandler } from '../shared/http.js';
 import { listProducts, publicProduct, requireProductBySlug } from '../domain/products.js';
 
 /**

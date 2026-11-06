@@ -1,4 +1,4 @@
-import { logger } from '@amg/core';
+import { logger } from './shared/logger.js';
 import {
   findProductBySlug,
   listProducts,

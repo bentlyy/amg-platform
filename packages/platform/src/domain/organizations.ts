@@ -1,5 +1,5 @@
 import { eq, sql } from 'drizzle-orm';
-import { AppError } from '@amg/core';
+import { AppError } from '../shared/http.js';
 import { getCoreDb } from '../db/index.js';
 import { schema } from '../db/schema.js';
 import { slugify, slugSuffix } from './slug.js';

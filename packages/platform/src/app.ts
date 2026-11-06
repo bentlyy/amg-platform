@@ -3,17 +3,9 @@ import path from 'node:path';
 import { readdirSync } from 'node:fs';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
-import {
-  errorHandler,
-  notFound,
-  logger,
-  assetVersion,
-  htmlPages,
-  assetHeaders,
-  AppError,
-  ASSET_MAX_AGE_MS,
-  HTML_CACHE_CONTROL,
-} from '@amg/core';
+import { errorHandler, notFound, AppError } from './shared/http.js';
+import { logger } from './shared/logger.js';
+import { assetVersion, htmlPages, assetHeaders, ASSET_MAX_AGE_MS, HTML_CACHE_CONTROL } from './shared/assets.js';
 import { platformConfig } from './config.js';
 import { clearSessionCookie, cookieParser, sessionFromRequest } from './http/middleware.js';
 import { authRouter } from './http/auth-routes.js';
