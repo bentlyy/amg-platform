@@ -1,0 +1,36 @@
+name: Publish auth-client
+
+on:
+  push:
+    tags:
+      - "auth-client-v*"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 20
+          cache: npm
+          registry-url: https://npm.pkg.github.com
+          scope: "@bentlyy"
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Construir @bentlyy/auth-client
+        run: npm run build -w @bentlyy/auth-client
+
+      - name: Publicar en GitHub Packages
+        run: npm publish -w @bentlyy/auth-client
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

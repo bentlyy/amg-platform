@@ -8,7 +8,7 @@
   "scripts": {
     "dev": "npm run dev -w @amg/landing",
     "dev:api": "npm run dev -w @amg/platform",
-    "build": "npm run build -w @amg/auth-client && npm run build -w @amg/platform && npm run build -w @amg/landing",
+    "build": "npm run build -w @bentlyy/auth-client && npm run build -w @amg/platform && npm run build -w @amg/landing",
     "start": "npm run start -w @amg/landing",
     "seed": "npm run seed -w @amg/platform",
     "sso:secret": "npm run sso:secret -w @amg/platform --",

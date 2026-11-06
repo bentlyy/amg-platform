@@ -174,7 +174,7 @@ describe('protección de rutas', () => {
 });
 
 /**
- * El alias `/api/logout` es lo que espera @amg/auth-client: el "Salir" de cada
+ * El alias `/api/logout` es lo que espera @bentlyy/auth-client: el "Salir" de cada
  * producto redirige acá por GET para cerrar la sesión CENTRAL y volver. Sin
  * esta ruta el usuario veía un 404 y seguía adentro (REG-SES-07/REG-UI-07).
  */

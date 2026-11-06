@@ -5,7 +5,7 @@
  * puede entrar a un producto. Los mini-SaaS no tienen usuarios: validan la
  * identidad que el Core les entrega por SSO.
  *
- * Para entrar desde un producto, usá `@amg/auth-client`, no esto directo.
+ * Para entrar desde un producto, usá `@bentlyy/auth-client`, no esto directo.
  */
 
 // configuración y arranque

@@ -1,5 +1,5 @@
 {
-  "name": "@amg/auth-client",
+  "name": "@bentlyy/auth-client",
   "version": "0.1.0",
   "private": false,
   "type": "module",
@@ -10,7 +10,8 @@
   },
   "license": "UNLICENSED",
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com"
+    "registry": "https://npm.pkg.github.com",
+    "access": "public"
   },
   "main": "./dist-cjs/index.js",
   "module": "./dist/index.js",
@@ -28,7 +29,7 @@
   },
   "scripts": {
     "build": "tsc -p tsconfig.json && tsc -p tsconfig.cjs.json && node -e \"require('fs').writeFileSync('dist-cjs/package.json', JSON.stringify({ type: 'commonjs' }))\"",
-    "dev": "echo \"@amg/auth-client es una libreria: no se ejecuta\"",
+    "dev": "echo \"@bentlyy/auth-client es una libreria: no se ejecuta\"",
     "test": "vitest run",
     "typecheck": "tsc --noEmit"
   },

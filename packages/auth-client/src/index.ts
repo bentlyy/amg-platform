@@ -1,5 +1,5 @@
 /**
- * @amg/auth-client — identidad de AMG para los subdominios.
+ * @bentlyy/auth-client — identidad de AMG para los subdominios.
  *
  * Un mini-SaaS NO tiene usuarios: no hay passwords, no hay tabla de cuentas,
  * no hay "¿te acordás de tu email?". La identidad vive en el Core y el
@@ -9,7 +9,7 @@
  *
  *   import express from 'express';
  *   import cookieParser from 'cookie-parser';
- *   import { loadConfig, mountAmgAuth, identity } from '@amg/auth-client';
+ *   import { loadConfig, mountAmgAuth, identity } from '@bentlyy/auth-client';
  *
  *   const app = express();
  *   const amg = loadConfig(process.env, 'inventario');
