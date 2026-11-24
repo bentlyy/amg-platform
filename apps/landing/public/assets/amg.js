@@ -1276,16 +1276,23 @@
 
   function openPrototype(prototype) {
     var backdrop;
+    var fullButton;
     var onKey = function (event) { if (event.key === 'Escape') closePrototype(); };
     var closePrototype = function () {
       document.removeEventListener('keydown', onKey);
       if (backdrop && backdrop.parentNode) backdrop.parentNode.removeChild(backdrop);
     };
+    var toggleFullscreen = function () {
+      var activo = backdrop.classList.toggle('proto-fullscreen');
+      fullButton.textContent = activo ? 'Salir de pantalla completa' : 'Pantalla completa';
+      fullButton.setAttribute('aria-pressed', activo ? 'true' : 'false');
+    };
+    fullButton = el('button', { class: 'btn btn--sm btn--ghost', type: 'button', 'aria-pressed': 'false', text: 'Pantalla completa', onclick: toggleFullscreen });
     backdrop = el('div', { class: 'proto-backdrop', role: 'dialog', 'aria-modal': 'true', 'aria-label': 'Vista previa de ' + prototype.name },
       el('div', { class: 'proto-modal' },
         el('div', { class: 'proto-bar' },
           el('strong', { text: prototype.name }),
-          el('span', { class: 'small soft', text: 'Vista previa confidencial · no compartir' }),
+          fullButton,
           el('button', { class: 'btn btn--sm btn--ghost', type: 'button', text: 'Cerrar', onclick: closePrototype }),
         ),
         el('iframe', {
