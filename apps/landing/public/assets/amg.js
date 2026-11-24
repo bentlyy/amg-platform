@@ -374,11 +374,11 @@
       var nav = [
         el('a', { href: '/productos', text: 'Productos', 'aria-current': here === '/productos' || here === '/precios' ? 'page' : null }),
         el('a', { href: '/mis-aplicaciones', text: 'Mis aplicaciones', 'aria-current': here === '/mis-aplicaciones' || here === '/contratar' ? 'page' : null }),
-        el('a', { href: '/demos', text: 'Demos', 'aria-current': here === '/demos' ? 'page' : null }),
+        el('a', { href: '/prototipos-publicos', text: 'Prototipos', 'aria-current': here === '/prototipos-publicos' ? 'page' : null }),
         el('a', { href: '/contacto', text: 'Contacto', 'aria-current': here === '/contacto' ? 'page' : null }),
       ];
       if (session) {
-        nav.push(el('a', { href: '/prototipos', text: 'Prototipos', 'aria-current': here === '/prototipos' ? 'page' : null }));
+        nav.push(el('a', { href: '/prototipos', text: 'Mis prototipos', 'aria-current': here === '/prototipos' ? 'page' : null }));
         nav.push(el('a', { class: 'btn btn--sm btn--ghost', href: '/mi-cuenta', text: firstName(session.user.name) || 'Mi cuenta' }));
         nav.push(el('button', { class: 'btn btn--sm', type: 'button', text: 'Salir', onclick: signOut }));
       } else {
@@ -1331,27 +1331,29 @@
     });
   };
 
-  var DEMOS = [
-    {
-      client_name: 'Dispensa Distribuciones',
-      name: 'Dispensa - Tienda completa',
-      description: 'Prototipo de tienda con carrito y envio gratis',
-      href: '/demos/04_tienda_completa.html',
-    },
-  ];
-
-  pages.demos = function () {
-    var target = byId('demos');
-    var cards = DEMOS.map(function (demo) {
-      return el('article', { class: 'card stack' },
-        el('span', { class: 'tag', text: demo.client_name }),
-        el('h2', { text: demo.name }),
-        demo.description ? el('p', { class: 'small soft', text: demo.description }) : null,
-        el('button', { class: 'btn', type: 'button', text: 'Abrir vista previa', onclick: function () { openPrototype(demo, true); } }),
-      );
+  pages['prototipos-publicos'] = function () {
+    var target = byId('prototipos-publicos');
+    mount(target, skeletons(3));
+    return api('/prototypes/public').then(function (data) {
+      var items = data.prototypes || [];
+      var cards = items.map(function (prototype) {
+        return el('article', { class: 'card stack' },
+          el('span', { class: 'tag', text: prototype.client_name }),
+          el('h2', { text: prototype.name }),
+          prototype.description ? el('p', { class: 'small soft', text: prototype.description }) : null,
+          el('button', { class: 'btn', type: 'button', text: 'Abrir vista previa', onclick: function () { openPrototype(prototype, true); } }),
+        );
+      });
+      mount(target, panel('Prototipos públicos', 'Vistas previas abiertas, disponibles para cualquier persona.',
+        items.length ? el('div', { class: 'proto-grid' }, cards) : emptyBox('No hay prototipos públicos por ahora.')));
+      var slug = new URLSearchParams(location.search).get('proto');
+      if (slug) {
+        var found = items.filter(function (p) { return p.slug === slug; })[0];
+        if (found) openPrototype(found, true);
+      }
+    }).catch(function (err) {
+      mount(target, errorBox(err));
     });
-    mount(target, panel('Prototipos en proceso', 'Vistas previas privadas, disponibles solo para tu organización.',
-      cards.length ? el('div', { class: 'proto-grid' }, cards) : emptyBox('No hay prototipos disponibles para tu organización.')));
   };
 
   pages.contacto = function () { return Promise.resolve(); };

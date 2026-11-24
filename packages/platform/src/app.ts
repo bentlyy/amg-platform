@@ -217,7 +217,6 @@ export function createPlatformApp(options: PlatformAppOptions = {}): Express {
     // indexe dos veces la misma pagina y los enlaces internos viejos sigan vivos.
     const publicRedirects: Record<string, string> = {
       '/index.html': '/',
-      '/demos.html': '/demos',
       '/productos.html': '/productos',
       '/sistemas.html': '/sistemas',
       '/soluciones.html': '/soluciones',
@@ -229,6 +228,7 @@ export function createPlatformApp(options: PlatformAppOptions = {}): Express {
       app.get(desde, (_req, res) => res.redirect(301, hacia));
     }
     app.get('/prototipos.html', (_req, res) => res.redirect(301, '/prototipos'));
+    app.get('/prototipos-publicos.html', (_req, res) => res.redirect(301, '/prototipos-publicos'));
 
     // TODO el HTML se sirve con la huella en los assets, no solo el hub. Si un
     // `.html` lo entregara `express.static`, iria sin `?v=` y el navegador (o
@@ -262,7 +262,7 @@ export function createPlatformApp(options: PlatformAppOptions = {}): Express {
     app.get('/', page('index.html'));
     app.get('/productos', page('productos.html'));
     app.get('/precios', page('productos.html'));
-    app.get('/demos', page('demos.html'));
+    app.get('/prototipos-publicos', page('prototipos-publicos.html'));
     app.get('/contacto', page('contacto.html'));
     app.get('/privacy', page('privacy.html'));
     app.get('/privacidad', page('privacy.html'));
