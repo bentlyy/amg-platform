@@ -1365,7 +1365,7 @@
     if (!page || !pages[page]) return;
 
     function run() {
-      loadSession().then(function (session) {
+      loadSession().catch(function () { return null; }).then(function (session) {
         renderShell(session);
         return pages[page](session);
       }).catch(function (err) {
