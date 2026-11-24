@@ -1278,6 +1278,7 @@
   function openPrototype(prototype, publicPreview) {
     var backdrop;
     var fullButton;
+    var href = prototype.href || (publicPreview ? '/api/prototypes/public/' : '/api/prototypes/') + encodeURIComponent(prototype.slug) + '/html';
     var onKey = function (event) { if (event.key === 'Escape') closePrototype(); };
     var closePrototype = function () {
       document.removeEventListener('keydown', onKey);
@@ -1298,7 +1299,7 @@
         ),
         el('iframe', {
           class: 'proto-frame',
-          src: (publicPreview ? '/api/prototypes/public/' : '/api/prototypes/') + encodeURIComponent(prototype.slug) + '/html',
+          src: href,
           sandbox: 'allow-scripts allow-forms',
           title: 'Vista previa de ' + prototype.name,
         }),
@@ -1330,24 +1331,27 @@
     });
   };
 
+  var DEMOS = [
+    {
+      client_name: 'Dispensa Distribuciones',
+      name: 'Dispensa - Tienda completa',
+      description: 'Prototipo de tienda con carrito y envio gratis',
+      href: '/demos/dispensa.html',
+    },
+  ];
+
   pages.demos = function () {
     var target = byId('demos');
-    mount(target, skeletons(3));
-    return api('/prototypes/public').then(function (data) {
-      var items = data.prototypes || [];
-      var cards = items.map(function (prototype) {
-        return el('article', { class: 'card stack' },
-          el('span', { class: 'tag', text: prototype.client_name }),
-          el('h2', { text: prototype.name }),
-          prototype.description ? el('p', { class: 'small soft', text: prototype.description }) : null,
-          el('button', { class: 'btn', type: 'button', text: 'Abrir vista previa', onclick: function () { openPrototype(prototype, true); } }),
-        );
-      });
-      mount(target, panel('Demos', 'Proyectos completos disponibles sin iniciar sesión.',
-        items.length ? el('div', { class: 'proto-grid' }, cards) : emptyBox('No hay demos disponibles.')));
-    }).catch(function (err) {
-      mount(target, errorBox(err));
+    var cards = DEMOS.map(function (demo) {
+      return el('article', { class: 'card stack' },
+        el('span', { class: 'tag', text: demo.client_name }),
+        el('h2', { text: demo.name }),
+        demo.description ? el('p', { class: 'small soft', text: demo.description }) : null,
+        el('button', { class: 'btn', type: 'button', text: 'Abrir vista previa', onclick: function () { openPrototype(demo, true); } }),
+      );
     });
+    mount(target, panel('Prototipos en proceso', 'Vistas previas privadas, disponibles solo para tu organización.',
+      cards.length ? el('div', { class: 'proto-grid' }, cards) : emptyBox('No hay prototipos disponibles para tu organización.')));
   };
 
   pages.contacto = function () { return Promise.resolve(); };
