@@ -356,39 +356,51 @@
     );
   }
 
-  function renderPrototiposPublicos() {
-    var grid = document.getElementById('prototipos-publicos-grid');
+  function demoHref(demo) {
+    return '/api/prototypes/public/' + encodeURIComponent(demo.slug) + '/html';
+  }
+
+  function renderDemosPublicos() {
+    var grid = document.getElementById('demos-grid');
     if (!grid) return;
     return api('/prototypes/public').then(function (data) {
       var items = (data && data.prototypes) || [];
-      var empty = document.getElementById('prototipos-publicos-vacio');
+      var empty = document.getElementById('demos-vacio');
       mount(grid);
       if (!items.length) {
-        if (empty) { empty.textContent = 'No hay prototipos públicos por ahora.'; empty.classList.remove('hidden'); }
+        if (empty) { empty.textContent = 'No hay demos públicos por ahora.'; empty.classList.remove('hidden'); }
         return;
       }
       if (empty) empty.classList.add('hidden');
-      mount(grid, items.map(function (proto) {
+      mount(grid, items.map(function (demo) {
         return el('article', { class: 'p-6 bg-surface-container-lowest rounded-2xl border border-outline-variant/50 bento-shadow' },
-          el('span', { class: 'text-label-mono-xs font-label-mono-xs text-on-surface-variant', text: proto.client_name }),
-          el('h3', { class: 'text-headline-sm font-headline-sm text-primary mt-2', text: proto.name }),
-          proto.description ? el('p', { class: 'text-body-sm font-body-sm text-on-surface-variant mt-2', text: proto.description }) : null,
-          el('button', {
-            class: 'inline-flex items-center justify-center px-4 py-2 mt-5 rounded-lg bg-primary text-on-primary text-body-sm font-body-sm font-medium hover:bg-neutral-800 transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary',
-            type: 'button',
-            text: 'Ver vista previa',
-            onclick: function () { if (window.AMGPreview) window.AMGPreview.open(proto, true); },
-          }),
+          el('span', { class: 'text-label-mono-xs font-label-mono-xs text-on-surface-variant', text: demo.client_name }),
+          el('h3', { class: 'text-headline-sm font-headline-sm text-primary mt-2', text: demo.name }),
+          demo.description ? el('p', { class: 'text-body-sm font-body-sm text-on-surface-variant mt-2', text: demo.description }) : null,
+          el('div', { class: 'mt-5 flex flex-wrap items-center gap-3' },
+            el('button', {
+              class: 'inline-flex items-center justify-center px-4 py-2 rounded-lg bg-primary text-on-primary text-body-sm font-body-sm font-medium hover:bg-neutral-800 transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary',
+              type: 'button',
+              text: 'Ver vista previa',
+              onclick: function () { if (window.AMGPreview) window.AMGPreview.open(demo, true); },
+            }),
+            el('a', {
+              class: 'inline-flex items-center gap-1.5 px-1 text-body-sm font-body-sm font-semibold text-primary hover:text-primary/70 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded',
+              href: demoHref(demo),
+              target: '_blank',
+              rel: 'noopener noreferrer',
+            }, el('span', { text: 'Abrir demo' }), arrowIcon()),
+          ),
         );
       }));
-      var slug = new URLSearchParams(location.search).get('proto');
+      var slug = new URLSearchParams(location.search).get('demo');
       if (slug) {
         var found = items.filter(function (p) { return p.slug === slug; })[0];
         if (found && window.AMGPreview) window.AMGPreview.open(found, true);
       }
     }).catch(function () {
-      var empty = document.getElementById('prototipos-publicos-vacio');
-      if (empty) { empty.textContent = 'No se pudieron cargar las vistas previas.'; empty.classList.remove('hidden'); }
+      var empty = document.getElementById('demos-vacio');
+      if (empty) { empty.textContent = 'No se pudieron cargar los demos.'; empty.classList.remove('hidden'); }
     });
   }
 
@@ -1370,7 +1382,7 @@
         var nav = document.getElementById('auth-nav');
         if (nav) mount(nav, navAuth(!session));
         ajustarNavSesion(session);
-        renderPrototiposPublicos();
+        renderDemosPublicos();
         renderApps(session);
         renderCuenta(session);
         renderContratar(session);

@@ -93,6 +93,10 @@ describe('prototipos privados', () => {
 });
 
 describe('prototipos públicos', () => {
+  it('/demos lleva a la sección pública de la landing', async () => {
+    await request(app).get('/demos').expect(301).expect('Location', '/#demos');
+  });
+
   it('lista y sirve solo los marcados como públicos, sin sesión', async () => {
     const d = await crearOrg('proto-d@test.cl', 'proto-d');
     upsertPrototype({

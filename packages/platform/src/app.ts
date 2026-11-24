@@ -261,7 +261,7 @@ export function createPlatformApp(options: PlatformAppOptions = {}): Express {
     app.get('/', page('index.html'));
     app.get('/productos', page('productos.html'));
     app.get('/precios', page('productos.html'));
-    app.get('/demos', page('contacto.html'));
+    app.get('/demos', (_req, res) => res.redirect(301, '/#demos'));
     app.get('/contacto', page('contacto.html'));
     app.get('/privacy', page('privacy.html'));
     app.get('/privacidad', page('privacy.html'));

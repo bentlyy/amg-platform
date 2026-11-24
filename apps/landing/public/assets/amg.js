@@ -374,7 +374,8 @@
       var nav = [
         el('a', { href: '/productos', text: 'Productos', 'aria-current': here === '/productos' || here === '/precios' ? 'page' : null }),
         el('a', { href: '/mis-aplicaciones', text: 'Mis aplicaciones', 'aria-current': here === '/mis-aplicaciones' || here === '/contratar' ? 'page' : null }),
-        el('a', { href: '/contacto', text: 'Contacto', 'aria-current': here === '/contacto' || here === '/demos' ? 'page' : null }),
+        el('a', { href: '/#demos', text: 'Demos' }),
+        el('a', { href: '/contacto', text: 'Contacto', 'aria-current': here === '/contacto' ? 'page' : null }),
       ];
       if (session) {
         nav.push(el('a', { href: '/prototipos', text: 'Prototipos', 'aria-current': here === '/prototipos' ? 'page' : null }));
@@ -1277,6 +1278,7 @@
   function openPrototype(prototype, publicPreview) {
     var backdrop;
     var fullButton;
+    var href = (publicPreview ? '/api/prototypes/public/' : '/api/prototypes/') + encodeURIComponent(prototype.slug) + '/html';
     var onKey = function (event) { if (event.key === 'Escape') closePrototype(); };
     var closePrototype = function () {
       document.removeEventListener('keydown', onKey);
@@ -1293,11 +1295,12 @@
         el('div', { class: 'proto-bar' },
           el('strong', { text: prototype.name }),
           fullButton,
+          el('a', { class: 'btn btn--sm btn--ghost', href: href, target: '_blank', rel: 'noopener noreferrer', text: 'Abrir en pestaña nueva' }),
           el('button', { class: 'btn btn--sm btn--ghost', type: 'button', text: 'Cerrar', onclick: closePrototype }),
         ),
         el('iframe', {
           class: 'proto-frame',
-          src: (publicPreview ? '/api/prototypes/public/' : '/api/prototypes/') + encodeURIComponent(prototype.slug) + '/html',
+          src: href,
           sandbox: 'allow-scripts allow-forms',
           title: 'Vista previa de ' + prototype.name,
         }),
