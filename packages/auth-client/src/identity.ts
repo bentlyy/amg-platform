@@ -63,6 +63,7 @@ export function verifyIdentity(token: string, config: Pick<AmgConfig, 'clientSec
   let decoded: string | JwtPayload;
   try {
     decoded = jwt.verify(token, config.clientSecret, {
+      algorithms: ['HS256'],
       issuer: config.coreUrl,
       // Sin esto, jwt NO compara la audiencia: el token aceptaría cualquier
       // audiencia firmada con la misma clave.

@@ -7,7 +7,7 @@ export function assetVersion(dir: string): string {
   const hash = createHash('sha1');
   let entradas: string[];
   try {
-    entradas = readdirSync(dir).sort();
+    entradas = readdirSync(dir, { recursive: true }).map(String).sort();
   } catch {
     return '0';
   }

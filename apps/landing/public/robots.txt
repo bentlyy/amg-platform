@@ -1,0 +1,22 @@
+# robots.txt de amgdeveloper.cl
+# Bots de búsqueda: permitidos en el contenido público.
+
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /login
+Disallow: /registro
+Disallow: /recuperar
+Disallow: /reset
+Disallow: /verificar-email
+Disallow: /invitacion
+Disallow: /mi-cuenta
+Disallow: /mis-aplicaciones
+Disallow: /contratar
+Disallow: /auth.html
+Disallow: /cuenta.html
+Disallow: /aplicaciones.html
+Disallow: /contratar.html
+Disallow: /producto.html
+
+Sitemap: https://amgdeveloper.cl/sitemap.xml

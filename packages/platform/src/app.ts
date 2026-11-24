@@ -7,13 +7,14 @@ import { errorHandler, notFound, AppError } from './shared/http.js';
 import { logger } from './shared/logger.js';
 import { assetVersion, htmlPages, assetHeaders, ASSET_MAX_AGE_MS, HTML_CACHE_CONTROL } from './shared/assets.js';
 import { platformConfig } from './config.js';
-import { clearSessionCookie, cookieParser, sessionFromRequest } from './http/middleware.js';
+import { authRequired, clearSessionCookie, cookieParser, sessionFromRequest } from './http/middleware.js';
 import { authRouter } from './http/auth-routes.js';
 import { logout } from './auth/service.js';
 import { safeReturnUrl } from './sso/service.js';
 import { accountRouter } from './http/account-routes.js';
 import { productsRouter } from './http/products-routes.js';
 import { ssoRouter } from './http/sso-routes.js';
+import { createPrototypesRouter } from './http/prototypes-routes.js';
 import { getCoreDb } from './db/init.js';
 import { countOrganizations } from './domain/organizations.js';
 import { countUsers } from './domain/users.js';
@@ -32,6 +33,8 @@ export interface PlatformAppOptions {
   staticDir?: string;
   /** Rutas de página que exigen sesión del Core. */
   protectedPages?: string[];
+  /** Carpeta privada con los HTML de prototipos. Nunca se sirve como estático. */
+  prototypeDir?: string;
 }
 
 export function createPlatformApp(options: PlatformAppOptions = {}): Express {
@@ -67,7 +70,7 @@ export function createPlatformApp(options: PlatformAppOptions = {}): Express {
   }
 
   app.disable('x-powered-by');
-  if (platformConfig.isProd) app.set('trust proxy', 1);
+  app.set('trust proxy', 1);
 
   app.use(
     helmet({
@@ -122,7 +125,7 @@ export function createPlatformApp(options: PlatformAppOptions = {}): Express {
 
   // Solo diagnóstico para ops, en local o por header. Jamás en producción.
   app.get('/api/_diagnostico', (req, res) => {
-    if (platformConfig.isProd && req.get('x-amg-diagnostico') !== process.env.CORE_DIAGNOSTICO_KEY) {
+    if (platformConfig.isProd && (!process.env.CORE_DIAGNOSTICO_KEY || req.get('x-amg-diagnostico') !== process.env.CORE_DIAGNOSTICO_KEY)) {
       return res.status(404).json({ error: 'No existe' });
     }
     return res.json({
@@ -136,6 +139,7 @@ export function createPlatformApp(options: PlatformAppOptions = {}): Express {
   app.use('/api/account', accountRouter);
   app.use('/api/products', productsRouter);
   app.use('/api/sso', ssoRouter);
+  app.use('/api/prototypes', createPrototypesRouter(path.resolve(options.prototypeDir ?? path.join(process.cwd(), 'prototipos'))));
 
   /**
    * WEBHOOK DE MERCADO PAGO
@@ -209,12 +213,29 @@ export function createPlatformApp(options: PlatformAppOptions = {}): Express {
       res.type('html').send(leer(name));
     };
 
+    // Las URLs con `.html` redirigen a su version limpia para que Google no
+    // indexe dos veces la misma pagina y los enlaces internos viejos sigan vivos.
+    const publicRedirects: Record<string, string> = {
+      '/index.html': '/',
+      '/productos.html': '/productos',
+      '/sistemas.html': '/sistemas',
+      '/soluciones.html': '/soluciones',
+      '/nosotros.html': '/nosotros',
+      '/contacto.html': '/contacto',
+      '/privacy.html': '/privacy',
+    };
+    for (const [desde, hacia] of Object.entries(publicRedirects)) {
+      app.get(desde, (_req, res) => res.redirect(301, hacia));
+    }
+    app.get('/prototipos.html', (_req, res) => res.redirect(301, '/prototipos'));
+
     // TODO el HTML se sirve con la huella en los assets, no solo el hub. Si un
     // `.html` lo entregara `express.static`, iria sin `?v=` y el navegador (o
     // Cloudflare) seguiria sirviendo un `landing.js` viejo —immutable, un ano—
     // mezclado con el HTML nuevo: el navbar de ayer con la pagina de hoy. Se
     // registran antes del static para ganarle el orden de rutas.
     for (const archivo of readdirSync(dir)) {
+      if (archivo === 'prototipos.html') continue;
       if (archivo.endsWith('.html')) app.get(`/${archivo}`, page(archivo));
     }
 
@@ -243,6 +264,10 @@ export function createPlatformApp(options: PlatformAppOptions = {}): Express {
     app.get('/demos', page('contacto.html'));
     app.get('/contacto', page('contacto.html'));
     app.get('/privacy', page('privacy.html'));
+    app.get('/privacidad', page('privacy.html'));
+    app.get('/sistemas', page('sistemas.html'));
+    app.get('/soluciones', page('soluciones.html'));
+    app.get('/nosotros', page('nosotros.html'));
     app.get('/productos/:slug', page('producto.html'));
 
     // Autenticación
@@ -257,6 +282,7 @@ export function createPlatformApp(options: PlatformAppOptions = {}): Express {
     app.get('/mi-cuenta', page('cuenta.html'));
     app.get('/mis-aplicaciones', page('aplicaciones.html'));
     app.get('/contratar', page('contratar.html'));
+    app.get('/prototipos', authRequired, page('prototipos.html'));
 
     for (const protectedPage of options.protectedPages ?? []) {
       app.get(protectedPage, page('aplicaciones.html'));

@@ -37,9 +37,11 @@ export function buildLoginUrl(
 /** ¿Es seguro mandar al usuario a `returnTo`? */
 export function isSafeReturnTo(value: unknown): value is string {
   if (typeof value !== 'string') return false;
-  if (!value.startsWith('/')) return false;
-  if (value.startsWith('//')) return false;
-  if (value.includes('\\')) return false;
+  let decoded = value;
+  try { decoded = decodeURIComponent(value); } catch { return false; }
+  if (!decoded.startsWith('/')) return false;
+  if (decoded.startsWith('//')) return false;
+  if (decoded.includes('\\')) return false;
   return true;
 }
 

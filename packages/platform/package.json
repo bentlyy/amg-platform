@@ -17,6 +17,7 @@
     "sso:secret": "tsx src/cli/sso-secret.ts",
     "discounts": "tsx src/cli/discounts.ts",
     "bootstrap": "tsx src/cli/bootstrap-tenant.ts",
+    "prototype:add": "tsx src/cli/add-prototype.ts",
     "test": "vitest run",
     "typecheck": "tsc --noEmit"
   },

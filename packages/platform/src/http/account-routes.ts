@@ -38,6 +38,23 @@ export const accountRouter = Router();
 accountRouter.use(authRequired);
 
 /**
+ * En desarrollo los productos corren en puertos locales, no en sus subdominios.
+ * El catálogo guarda la URL de producción y no debe cambiar: `app_url` es la
+ * fuente de verdad para callbacks y despliegues. Solo la respuesta de esta API
+ * sustituye la URL por la local cuando `CORE_LOCAL_APPS` la declara.
+ */
+type CatalogEntry = ReturnType<typeof organizationProductCatalog>[number];
+
+function withLocalAppUrl(entry: CatalogEntry) {
+  const product = publicProduct(entry.product);
+  return {
+    ...product,
+    app_url: platformConfig.localApps[product.slug] ?? product.app_url,
+    access: entry.state,
+  };
+}
+
+/**
  * Freno a la adivinación de cupones: sin esto un script prueba códigos hasta dar
  * con uno activo. Generoso a propósito (no es login), pero no infinito.
  */
@@ -57,8 +74,7 @@ accountRouter.get(
     return res.json({
       ...me(session),
       products: catalog.map((entry) => ({
-        ...publicProduct(entry.product),
-        access: entry.state,
+        ...withLocalAppUrl(entry),
         contracted: entry.contracted,
       })),
       active: catalog.filter((entry) => entry.contracted).length,
@@ -74,8 +90,8 @@ accountRouter.get(
     const catalog = organizationProductCatalog(session.organizationId);
     return res.json({
       organization: session.organization,
-      active: catalog.filter((e) => e.contracted).map((e) => ({ ...publicProduct(e.product), access: e.state })),
-      available: catalog.filter((e) => !e.contracted).map((e) => ({ ...publicProduct(e.product), access: e.state })),
+      active: catalog.filter((e) => e.contracted).map(withLocalAppUrl),
+      available: catalog.filter((e) => !e.contracted).map(withLocalAppUrl),
     });
   }),
 );

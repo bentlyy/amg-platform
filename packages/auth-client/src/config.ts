@@ -32,7 +32,7 @@ const DEFAULTS = {
   callbackPath: '/auth/callback',
   sessionCookie: 'app_session',
   sessionDays: 30,
-  introspect: false,
+  introspect: true,
 };
 
 function bool(value: string | undefined, fallback: boolean): boolean {

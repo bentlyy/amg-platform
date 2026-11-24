@@ -1,4 +1,5 @@
 import type { Request, RequestHandler, Response } from 'express';
+import { createHmac, randomBytes, timingSafeEqual } from 'node:crypto';
 import type { AmgErrorReason, AmgResolvedConfig } from './config.js';
 import { exchangeCode, introspect, verifyIdentity, type AmgIdentity } from './identity.js';
 import { buildLoginUrl, describeReason, isSafeReturnTo, redirectUriFor } from './login.js';
@@ -58,6 +59,57 @@ function clearSessionCookie(res: Response, config: AmgResolvedConfig): void {
   res.clearCookie?.(config.sessionCookie, { path: '/' });
 }
 
+function stateCookieName(config: AmgResolvedConfig): string {
+  return `${config.sessionCookie}_oauth_state`;
+}
+
+function stateSignature(config: AmgResolvedConfig, payload: string): string {
+  return createHmac('sha256', config.clientSecret).update(payload).digest('hex').slice(0, 32);
+}
+
+export function issueOAuthState(res: Response, config: AmgResolvedConfig, returnTo?: string): string {
+  const dest = isSafeReturnTo(returnTo) && returnTo.length <= 200 ? returnTo : '/';
+  const nonce = randomBytes(18).toString('base64url');
+  const encoded = Buffer.from(dest, 'utf8').toString('base64url');
+  const payload = `${nonce}.${encoded}`;
+  const state = `${payload}.${stateSignature(config, payload)}`;
+  res.cookie?.(stateCookieName(config), state, {
+    httpOnly: true,
+    sameSite: 'lax',
+    secure: config.isProd,
+    path: '/',
+    maxAge: 10 * 60 * 1000,
+  });
+  return state;
+}
+
+export function consumeOAuthState(
+  req: Request,
+  res: Response,
+  config: AmgResolvedConfig,
+  state?: string,
+): string {
+  const name = stateCookieName(config);
+  const cookie = readCookie(req, name);
+  res.clearCookie?.(name, { path: '/' });
+  if (!cookie || !state || cookie.length !== state.length) return '/';
+  const received = Buffer.from(cookie);
+  const expected = Buffer.from(state);
+  if (!timingSafeEqual(received, expected)) return '/';
+  const [nonce, encoded, signature, ...rest] = state.split('.');
+  if (!nonce || !encoded || !signature || rest.length) return '/';
+  const expectedSignature = stateSignature(config, `${nonce}.${encoded}`);
+  const a = Buffer.from(signature);
+  const b = Buffer.from(expectedSignature);
+  if (a.length !== b.length || !timingSafeEqual(a, b)) return '/';
+  const returnTo = Buffer.from(encoded, 'base64url').toString('utf8');
+  return isSafeReturnTo(returnTo) ? returnTo : '/';
+}
+
+function loginUrlFor(res: Response, config: AmgResolvedConfig, returnTo?: string): string {
+  return buildLoginUrl(config, returnTo, issueOAuthState(res, config, returnTo));
+}
+
 /**
  * Monta la identidad de AMG en un producto.
  *
@@ -89,7 +141,7 @@ export function mountAmgAuth(config: AmgResolvedConfig, options: MountOptions = 
   const renderError =
     options.renderError ??
     ((req, res, reason) => {
-      const loginUrl = buildLoginUrl(config, req.originalUrl, req.originalUrl);
+      const loginUrl = loginUrlFor(res, config, req.originalUrl);
       if (wantsJson(req)) {
         res.status(401).json({ error: reason, message: describeReason(reason), loginUrl });
         return;
@@ -114,12 +166,12 @@ export function mountAmgAuth(config: AmgResolvedConfig, options: MountOptions = 
     const token = readCookie(req, config.sessionCookie);
     if (!token) {
       if (req.method === 'GET' && !wantsJson(req)) {
-        return res.redirect(302, buildLoginUrl(config, req.originalUrl));
+        return res.redirect(302, loginUrlFor(res, config, req.originalUrl));
       }
       return res.status(401).json({
         error: 'sin-sesion',
         message: 'Tu sesión expiró o no existe. Iniciá sesión para continuar.',
-        loginUrl: buildLoginUrl(config, req.originalUrl),
+        loginUrl: loginUrlFor(res, config, req.originalUrl),
       });
     }
 
@@ -130,12 +182,12 @@ export function mountAmgAuth(config: AmgResolvedConfig, options: MountOptions = 
       // lo mandamos al login otra vez.
       clearSessionCookie(res, config);
       if (req.method === 'GET' && !wantsJson(req)) {
-        return res.redirect(302, buildLoginUrl(config, req.originalUrl));
+        return res.redirect(302, loginUrlFor(res, config, req.originalUrl));
       }
       return res.status(401).json({
         error: verified.reason,
         message: describeReason(verified.reason),
-        loginUrl: buildLoginUrl(config, req.originalUrl),
+        loginUrl: loginUrlFor(res, config, req.originalUrl),
       });
     }
 
@@ -159,7 +211,7 @@ export function mountAmgAuth(config: AmgResolvedConfig, options: MountOptions = 
     void (async () => {
       const code = typeof req.query.code === 'string' ? req.query.code : undefined;
       const state = typeof req.query.state === 'string' ? req.query.state : undefined;
-      if (!code) return res.status(400).send(errorPage({ title: 'Falta el código', message: 'Volvé a iniciar sesión.', loginUrl: buildLoginUrl(config, '/'), productName: options.productName }));
+      if (!code) return res.status(400).send(errorPage({ title: 'Falta el código', message: 'Volvé a iniciar sesión.', loginUrl: loginUrlFor(res, config, '/'), productName: options.productName }));
 
       const exchanged = await exchangeCode(code, config, redirectUriFor(config));
       if (!exchanged.ok) {
@@ -171,15 +223,14 @@ export function mountAmgAuth(config: AmgResolvedConfig, options: MountOptions = 
           errorPage({
             title: 'No pudimos iniciar sesión',
             message: exchanged.reason,
-            retryUrl: transitorio ? buildLoginUrl(config, isSafeReturnTo(state) ? state : '/') : undefined,
+            retryUrl: transitorio ? loginUrlFor(res, config, consumeOAuthState(req, res, config, state)) : undefined,
             retryAfterSeconds: exchanged.retryAfterSeconds,
             productName: options.productName,
           }),
         );
       }
       setSessionCookie(res, config, exchanged.accessToken);
-      if (state && isSafeReturnTo(state)) return res.redirect(302, state);
-      res.redirect(302, '/');
+      return res.redirect(302, consumeOAuthState(req, res, config, state));
     })();
   };
 

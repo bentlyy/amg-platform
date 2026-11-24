@@ -8,17 +8,25 @@
   "scripts": {
     "dev": "npm run dev -w @amg/landing",
     "dev:api": "npm run dev -w @amg/platform",
-    "build": "npm run build -w @bentlyy/auth-client && npm run build -w @amg/platform && npm run build -w @amg/landing",
+    "dev:css": "tailwindcss -c tailwind.config.cjs -i apps/landing/src/tailwind.css -o apps/landing/public/assets/tailwind.css --watch",
+    "build:css": "tailwindcss -c tailwind.config.cjs -i apps/landing/src/tailwind.css -o apps/landing/public/assets/tailwind.css --minify",
+    "build": "npm run build:css && npm run build -w @bentlyy/auth-client && npm run build -w @amg/platform && npm run build -w @amg/landing",
     "start": "npm run start -w @amg/landing",
     "seed": "npm run seed -w @amg/platform",
     "sso:secret": "npm run sso:secret -w @amg/platform --",
     "billing:confirm": "npm run billing:confirm -w @amg/platform --",
     "discounts": "npm run discounts -w @amg/platform --",
+    "prototype:add": "npm run prototype:add -w @amg/platform --",
     "bootstrap": "npm run bootstrap -w @amg/platform --",
     "test": "npm run test --workspaces --if-present",
     "typecheck": "npm run typecheck --workspaces --if-present"
   },
   "engines": {
     "node": ">=20"
+  },
+  "devDependencies": {
+    "@tailwindcss/container-queries": "^0.1.1",
+    "@tailwindcss/forms": "^0.5.10",
+    "tailwindcss": "^3.4.17"
   }
 }

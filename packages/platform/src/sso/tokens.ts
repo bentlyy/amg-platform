@@ -108,6 +108,7 @@ export function verifyProductToken(
   let decoded: string | JwtPayload;
   try {
     decoded = jwt.verify(token, clientSecret, {
+      algorithms: ['HS256'],
       issuer: platformConfig.coreUrl,
       // Sin `audience` NO se valida la audiencia: jwt solo compara si se le pasa.
       audience: expectedProduct,

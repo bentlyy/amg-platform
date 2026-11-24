@@ -377,6 +377,7 @@
         el('a', { href: '/contacto', text: 'Contacto', 'aria-current': here === '/contacto' || here === '/demos' ? 'page' : null }),
       ];
       if (session) {
+        nav.push(el('a', { href: '/prototipos', text: 'Prototipos', 'aria-current': here === '/prototipos' ? 'page' : null }));
         nav.push(el('a', { class: 'btn btn--sm btn--ghost', href: '/mi-cuenta', text: firstName(session.user.name) || 'Mi cuenta' }));
         nav.push(el('button', { class: 'btn btn--sm', type: 'button', text: 'Salir', onclick: signOut }));
       } else {
@@ -589,7 +590,12 @@
         method: 'POST',
         body: { email: values.email, password: values.password, returnUrl: values.returnUrl || undefined },
       }).then(function (result) {
-        location.assign(result.return_url || returnTarget());
+        var destino = result.return_url || returnTarget();
+        if (destino !== '/' || values.returnUrl) return location.assign(destino);
+        return api('/prototypes').then(function (data) {
+          var tienePrototipos = data && data.prototypes && data.prototypes.length;
+          location.assign(tienePrototipos ? '/prototipos' : destino);
+        }, function () { location.assign(destino); });
       });
     });
     mount(target, authCard('Ingresa a tu cuenta', 'Un solo acceso para todas tus herramientas.', form));
@@ -1265,6 +1271,54 @@
         errorBox(err),
         el('a', { class: 'btn btn--ghost', href: '/productos', text: 'Ver todos los productos' }),
       ));
+    });
+  };
+
+  function openPrototype(prototype) {
+    var backdrop;
+    var onKey = function (event) { if (event.key === 'Escape') closePrototype(); };
+    var closePrototype = function () {
+      document.removeEventListener('keydown', onKey);
+      if (backdrop && backdrop.parentNode) backdrop.parentNode.removeChild(backdrop);
+    };
+    backdrop = el('div', { class: 'proto-backdrop', role: 'dialog', 'aria-modal': 'true', 'aria-label': 'Vista previa de ' + prototype.name },
+      el('div', { class: 'proto-modal' },
+        el('div', { class: 'proto-bar' },
+          el('strong', { text: prototype.name }),
+          el('span', { class: 'small soft', text: 'Vista previa confidencial · no compartir' }),
+          el('button', { class: 'btn btn--sm btn--ghost', type: 'button', text: 'Cerrar', onclick: closePrototype }),
+        ),
+        el('iframe', {
+          class: 'proto-frame',
+          src: '/api/prototypes/' + encodeURIComponent(prototype.slug) + '/html',
+          sandbox: 'allow-scripts allow-forms',
+          title: 'Vista previa de ' + prototype.name,
+        }),
+      ),
+    );
+    backdrop.addEventListener('click', function (event) { if (event.target === backdrop) closePrototype(); });
+    document.addEventListener('keydown', onKey);
+    document.body.appendChild(backdrop);
+  }
+
+  pages.prototipos = function (session) {
+    requireSession(session);
+    var target = byId('prototipos');
+    mount(target, skeletons(3));
+    return api('/prototypes').then(function (data) {
+      var items = data.prototypes || [];
+      var cards = items.map(function (prototype) {
+        return el('article', { class: 'card stack' },
+          el('span', { class: 'tag', text: prototype.client_name }),
+          el('h2', { text: prototype.name }),
+          prototype.description ? el('p', { class: 'small soft', text: prototype.description }) : null,
+          el('button', { class: 'btn', type: 'button', text: 'Abrir vista previa', onclick: function () { openPrototype(prototype); } }),
+        );
+      });
+      mount(target, panel('Prototipos en proceso', 'Vistas previas privadas, disponibles solo para tu organización.',
+        items.length ? el('div', { class: 'proto-grid' }, cards) : emptyBox('No hay prototipos disponibles para tu organización.')));
+    }).catch(function (err) {
+      mount(target, errorBox(err));
     });
   };
 

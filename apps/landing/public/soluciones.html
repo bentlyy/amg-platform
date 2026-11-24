@@ -5,226 +5,11 @@
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>Soluciones a medida — AMG</title>
 <!-- Material Symbols Google Font (Exact link as mandated) -->
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;icon_names=account_circle,apps,architecture,arrow_forward,bolt,calendar_month,clinical_notes,construction,diversity_3,domain,expand_more,handshake,handyman,key,language,lock,medical_services,monitoring,public,science,search_insights,shield,shield_lock,support_agent,trending_up,widgets&amp;display=swap" rel="stylesheet"/>
 <!-- Plus Jakarta Sans & JetBrains Mono Fonts -->
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<!-- Tailwind CSS v3 with Plugins -->
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<!-- Verbatim Tailwind Config Injection -->
-<script id="tailwind-config">
-    tailwind.config = {
-      darkMode: "class",
-      theme: {
-        extend: {
-          "colors": {
-            "inverse-primary": "#c6c6c9",
-            "on-surface-variant": "#44474a",
-            "on-primary": "#ffffff",
-            "primary-container": "#1e2022",
-            "on-surface": "#1b1c1a",
-            "tertiary-container": "#002042",
-            "on-primary-container": "#86878a",
-            "on-tertiary-fixed-variant": "#0a4783",
-            "on-secondary": "#ffffff",
-            "on-error-container": "#93000a",
-            "secondary-fixed-dim": "#ffb68c",
-            "primary-fixed-dim": "#c6c6c9",
-            "primary": "#06080a",
-            "surface-container-highest": "#e4e2df",
-            "tertiary-fixed-dim": "#a6c8ff",
-            "surface-dim": "#dbdad7",
-            "outline": "#75777a",
-            "on-error": "#ffffff",
-            "error-container": "#ffdad6",
-            "on-secondary-fixed": "#321200",
-            "secondary": "#994703",
-            "secondary-container": "#fc934f",
-            "on-secondary-fixed-variant": "#753400",
-            "on-secondary-container": "#6d3000",
-            "primary-fixed": "#e2e2e5",
-            "on-tertiary-fixed": "#001c3a",
-            "surface-variant": "#e4e2df",
-            "error": "#ba1a1a",
-            "surface-container": "#efeeeb",
-            "secondary-fixed": "#ffdbc9",
-            "on-tertiary-container": "#5b89c9",
-            "on-background": "#1b1c1a",
-            "on-tertiary": "#ffffff",
-            "background": "#fbf9f6",
-            "inverse-surface": "#30312f",
-            "surface-tint": "#5d5e61",
-            "on-primary-fixed": "#1a1c1e",
-            "surface-container-lowest": "#ffffff",
-            "outline-variant": "#c5c6ca",
-            "surface-bright": "#fbf9f6",
-            "tertiary-fixed": "#d4e3ff",
-            "surface-container-low": "#f5f3f0",
-            "tertiary": "#000818",
-            "surface": "#fbf9f6",
-            "inverse-on-surface": "#f2f0ed",
-            "surface-container-high": "#eae8e5",
-            "on-primary-fixed-variant": "#454749"
-          },
-          "borderRadius": {
-            "DEFAULT": "0.25rem",
-            "lg": "0.5rem",
-            "xl": "0.75rem",
-            "full": "9999px"
-          },
-          "spacing": {
-            "space-xs": "0.25rem",
-            "space-md": "0.875rem",
-            "space-xl": "2.25rem",
-            "space-lg": "1.5rem",
-            "gutter-desktop": "1.5rem",
-            "margin": "1.25rem",
-            "gutter": "1.25rem",
-            "margin-desktop": "3rem",
-            "space-sm": "0.5rem"
-          },
-          "fontFamily": {
-            "display-hero-mobile": [
-              "Plus Jakarta Sans"
-            ],
-            "headline-lg-mobile": [
-              "Plus Jakarta Sans"
-            ],
-            "label-caps": [
-              "Plus Jakarta Sans"
-            ],
-            "headline-sm": [
-              "Plus Jakarta Sans"
-            ],
-            "headline-lg": [
-              "Plus Jakarta Sans"
-            ],
-            "label-mono-xs": [
-              "JetBrains Mono"
-            ],
-            "body-md": [
-              "Plus Jakarta Sans"
-            ],
-            "display-hero": [
-              "Plus Jakarta Sans"
-            ],
-            "body-lg": [
-              "Plus Jakarta Sans"
-            ],
-            "headline-md": [
-              "Plus Jakarta Sans"
-            ],
-            "label-mono": [
-              "JetBrains Mono"
-            ],
-            "body-sm": [
-              "Plus Jakarta Sans"
-            ]
-          },
-          "fontSize": {
-            "display-hero-mobile": [
-              "36px",
-              {
-                "lineHeight": "44px",
-                "letterSpacing": "-0.025em",
-                "fontWeight": "700"
-              }
-            ],
-            "headline-lg-mobile": [
-              "26px",
-              {
-                "lineHeight": "34px",
-                "letterSpacing": "-0.015em",
-                "fontWeight": "600"
-              }
-            ],
-            "label-caps": [
-              "11px",
-              {
-                "lineHeight": "16px",
-                "letterSpacing": "0.06em",
-                "fontWeight": "700"
-              }
-            ],
-            "headline-sm": [
-              "18px",
-              {
-                "lineHeight": "26px",
-                "letterSpacing": "-0.01em",
-                "fontWeight": "600"
-              }
-            ],
-            "headline-lg": [
-              "32px",
-              {
-                "lineHeight": "40px",
-                "letterSpacing": "-0.02em",
-                "fontWeight": "600"
-              }
-            ],
-            "label-mono-xs": [
-              "10px",
-              {
-                "lineHeight": "14px",
-                "letterSpacing": "0.04em",
-                "fontWeight": "500"
-              }
-            ],
-            "body-md": [
-              "15px",
-              {
-                "lineHeight": "24px",
-                "letterSpacing": "0em",
-                "fontWeight": "400"
-              }
-            ],
-            "display-hero": [
-              "56px",
-              {
-                "lineHeight": "64px",
-                "letterSpacing": "-0.03em",
-                "fontWeight": "700"
-              }
-            ],
-            "body-lg": [
-              "17px",
-              {
-                "lineHeight": "26px",
-                "letterSpacing": "-0.005em",
-                "fontWeight": "400"
-              }
-            ],
-            "headline-md": [
-              "22px",
-              {
-                "lineHeight": "30px",
-                "letterSpacing": "-0.015em",
-                "fontWeight": "600"
-              }
-            ],
-            "label-mono": [
-              "12px",
-              {
-                "lineHeight": "16px",
-                "letterSpacing": "0.02em",
-                "fontWeight": "500"
-              }
-            ],
-            "body-sm": [
-              "13px",
-              {
-                "lineHeight": "20px",
-                "letterSpacing": "0.005em",
-                "fontWeight": "400"
-              }
-            ]
-          }
-        },
-      },
-    }
-  </script>
 <style>
     .material-symbols-outlined {
       font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
@@ -279,6 +64,37 @@
 footer a { min-height: 24px; display: inline-flex; align-items: center; }
 .text-outline { color: #5f6368 !important; }
 </style>
+<!-- SEO: canónica, redes sociales y datos estructurados -->
+<link rel="canonical" href="https://amgdeveloper.cl/soluciones"/>
+<meta name="robots" content="index, follow, max-image-preview:large"/>
+<meta name="theme-color" content="#06080a"/>
+<link rel="icon" href="/favicon.ico" sizes="any"/>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml"/>
+<link rel="apple-touch-icon" href="/apple-touch-icon.png"/>
+<link rel="manifest" href="/site.webmanifest"/>
+<meta property="og:type" content="website"/>
+<meta property="og:site_name" content="AMG"/>
+<meta property="og:locale" content="es_CL"/>
+<meta property="og:title" content="Soluciones a medida - AMG"/>
+<meta property="og:description" content="Diseñamos y desarrollamos software específico para tu negocio, sobre la misma cuenta e infraestructura de AMG."/>
+<meta property="og:url" content="https://amgdeveloper.cl/soluciones"/>
+<meta property="og:image" content="https://amgdeveloper.cl/og-amg.png"/>
+<meta property="og:image:width" content="1200"/>
+<meta property="og:image:height" content="630"/>
+<meta property="og:image:alt" content="Soluciones a medida de AMG"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:title" content="Soluciones a medida - AMG"/>
+<meta name="twitter:description" content="Diseñamos y desarrollamos software específico para tu negocio, sobre la misma cuenta e infraestructura de AMG."/>
+<meta name="twitter:image" content="https://amgdeveloper.cl/og-amg.png"/>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@graph":[
+{"@type":"Organization","@id":"https://amgdeveloper.cl/#organizacion","name":"AMG","url":"https://amgdeveloper.cl/","logo":"https://amgdeveloper.cl/og-amg.png"},
+{"@type":"WebSite","@id":"https://amgdeveloper.cl/#sitio","url":"https://amgdeveloper.cl/","name":"AMG","inLanguage":"es-CL","publisher":{"@id":"https://amgdeveloper.cl/#organizacion"}},
+{"@type":"WebPage","@id":"https://amgdeveloper.cl/soluciones#webpage","url":"https://amgdeveloper.cl/soluciones","name":"Soluciones a medida - AMG","description":"Software específico a la medida de cada cliente.","isPartOf":{"@id":"https://amgdeveloper.cl/#sitio"},"inLanguage":"es-CL","breadcrumb":{"@id":"https://amgdeveloper.cl/soluciones#breadcrumb"}},
+{"@type":"BreadcrumbList","@id":"https://amgdeveloper.cl/soluciones#breadcrumb","itemListElement":[{"@type":"ListItem","position":1,"name":"Inicio","item":"https://amgdeveloper.cl/"},{"@type":"ListItem","position":2,"name":"Soluciones","item":"https://amgdeveloper.cl/soluciones"}]}
+]}
+</script>
+<link rel="stylesheet" href="/assets/tailwind.css"/>
 </head>
 <body class="bg-background text-on-surface antialiased selection:bg-surface-container-high selection:text-primary min-h-screen flex flex-col justify-between">
 <!-- ========================================== -->
@@ -313,6 +129,9 @@ footer a { min-height: 24px; display: inline-flex; align-items: center; }
 <a class="text-on-surface-variant dark:text-outline-variant font-medium text-body-sm font-body-sm hover:text-primary dark:hover:text-inverse-primary transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded hidden" data-solo-sesion href="/#tus-aplicaciones">
           Mis aplicaciones
         </a>
+<a class="text-on-surface-variant dark:text-outline-variant font-medium text-body-sm font-body-sm hover:text-primary dark:hover:text-inverse-primary transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded hidden" data-solo-sesion href="/prototipos">
+          Prototipos
+        </a>
 </div>
 <!-- Trailing Elements & Badges -->
 <div class="flex items-center gap-3">
@@ -326,7 +145,7 @@ footer a { min-height: 24px; display: inline-flex; align-items: center; }
 <div class="absolute right-0 mt-2 w-max min-w-72 max-w-[92vw] p-1.5 rounded-2xl bg-surface border border-outline-variant/60 shadow-2xl">
 <div class="px-3 pt-2 pb-1.5 text-label-caps font-label-caps text-on-surface-variant tracking-wider">SISTEMAS Y HERRAMIENTAS</div>
 <ul class="divide-y divide-outline-variant/30">
-<li><a class="group flex items-center gap-2.5 px-3 py-1.5 rounded-md text-on-surface hover:bg-surface-container-low transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary" href="https://vitaria.app" rel="noopener noreferrer" target="_blank"><span aria-hidden="true" class="w-2 h-2 rounded-full bg-teal-500 shrink-0"></span><span class="text-xs font-medium group-hover:text-primary whitespace-nowrap">Vitaria</span><span class="ml-auto pl-3 shrink-0"><span class="inline-flex items-center gap-1.5 text-label-mono-xs font-label-mono-xs font-semibold text-emerald-600" title="En línea"><span aria-hidden="true" class="relative flex h-2.5 w-2.5"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span><span class="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-500 ring-2 ring-emerald-500/25"></span></span>EN LÍNEA</span></span></a></li>
+<li><a class="group flex items-center gap-2.5 px-3 py-1.5 rounded-md text-on-surface hover:bg-surface-container-low transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary" href="https://vitaria.amgdeveloper.cl" rel="noopener noreferrer" target="_blank"><span aria-hidden="true" class="w-2 h-2 rounded-full bg-teal-500 shrink-0"></span><span class="text-xs font-medium group-hover:text-primary whitespace-nowrap">Vitaria</span><span class="ml-auto pl-3 shrink-0"><span class="inline-flex items-center gap-1.5 text-label-mono-xs font-label-mono-xs font-semibold text-emerald-600" title="En línea"><span aria-hidden="true" class="relative flex h-2.5 w-2.5"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span><span class="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-500 ring-2 ring-emerald-500/25"></span></span>EN LÍNEA</span></span></a></li>
 <li><a class="group flex items-center gap-2.5 px-3 py-1.5 rounded-md text-on-surface hover:bg-surface-container-low transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary" href="https://taller.amgdeveloper.cl" rel="noopener noreferrer" target="_blank"><span aria-hidden="true" class="w-2 h-2 rounded-full bg-amber-500 shrink-0"></span><span class="text-xs font-medium group-hover:text-primary whitespace-nowrap">Taller Mecánico</span><span class="ml-auto pl-3 shrink-0"><span class="inline-flex items-center gap-1.5 text-label-mono-xs font-label-mono-xs font-semibold text-emerald-600" title="En línea"><span aria-hidden="true" class="relative flex h-2.5 w-2.5"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span><span class="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-500 ring-2 ring-emerald-500/25"></span></span>EN LÍNEA</span></span></a></li>
 <li><a class="group flex items-center gap-2.5 px-3 py-1.5 rounded-md text-on-surface hover:bg-surface-container-low transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary" href="https://citas.amgdeveloper.cl" rel="noopener noreferrer" target="_blank"><span aria-hidden="true" class="w-2 h-2 rounded-full bg-indigo-500 shrink-0"></span><span class="text-xs font-medium group-hover:text-primary whitespace-nowrap">Agenda de Citas</span><span class="ml-auto pl-3 shrink-0"><span class="inline-flex items-center gap-1.5 text-label-mono-xs font-label-mono-xs font-semibold text-emerald-600" title="En línea"><span aria-hidden="true" class="relative flex h-2.5 w-2.5"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span><span class="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-500 ring-2 ring-emerald-500/25"></span></span>EN LÍNEA</span></span></a></li>
 <li><a class="group flex items-center gap-2.5 px-3 py-1.5 rounded-md text-on-surface hover:bg-surface-container-low transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary" href="https://espacios.amgdeveloper.cl" rel="noopener noreferrer" target="_blank"><span aria-hidden="true" class="w-2 h-2 rounded-full bg-emerald-500 shrink-0"></span><span class="text-xs font-medium group-hover:text-primary whitespace-nowrap">Reservas de Canchas</span><span class="ml-auto pl-3 shrink-0"><span class="inline-flex items-center gap-1.5 text-label-mono-xs font-label-mono-xs font-semibold text-emerald-600" title="En línea"><span aria-hidden="true" class="relative flex h-2.5 w-2.5"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span><span class="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-500 ring-2 ring-emerald-500/25"></span></span>EN LÍNEA</span></span></a></li>

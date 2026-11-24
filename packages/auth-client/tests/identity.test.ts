@@ -3,8 +3,9 @@ import { randomBytes } from 'node:crypto';
 import jwt from 'jsonwebtoken';
 import { verifyIdentity, exchangeCode, introspect } from '../src/identity.js';
 import { buildLoginUrl, isSafeReturnTo, redirectUriFor } from '../src/login.js';
+import { issueOAuthState, consumeOAuthState } from '../src/middleware.js';
 import { encodeIdentityCookie, decodeIdentityCookie } from '../src/session.js';
-import type { AmgConfig } from '../src/config.js';
+import type { AmgConfig, AmgResolvedConfig } from '../src/config.js';
 
 const CORE = 'https://amgdeveloper.cl';
 const ISSUER = CORE;
@@ -235,5 +236,59 @@ describe('fuerza bruta de secretos', () => {
     }
     expect(aciertos).toBe(0);
     expect(verifyIdentity(token, cfg).ok).toBe(true);
+  });
+});
+
+describe('state OAuth ligado a la cookie del navegador', () => {
+  const cfg: AmgResolvedConfig = {
+    ...config('inventario', SECRETO_INVENTARIO),
+    isProd: false,
+    callbackPath: '/auth/callback',
+    sessionCookie: 'app_session',
+    sessionDays: 30,
+    introspect: true,
+  };
+
+  function mockRes() {
+    const cookies: Record<string, string> = {};
+    const res = {
+      cookies,
+      cookie: (name: string, value: string) => { cookies[name] = value; },
+      clearCookie: (name: string) => { delete cookies[name]; },
+    };
+    return res as typeof res & Parameters<typeof issueOAuthState>[0];
+  }
+
+  function mockReq(cookies: Record<string, string>) {
+    const header = Object.entries(cookies).map(([k, v]) => `${k}=${v}`).join('; ');
+    return { headers: { cookie: header } } as Parameters<typeof consumeOAuthState>[0];
+  }
+
+  it('devuelve el return_to sólo si la cookie coincide', () => {
+    const res = mockRes();
+    const state = issueOAuthState(res, cfg, '/inventario/stock');
+    expect(state.length).toBeLessThan(500);
+    expect(consumeOAuthState(mockReq(res.cookies), res, cfg, state)).toBe('/inventario/stock');
+    expect(res.cookies['app_session_oauth_state']).toBeUndefined();
+  });
+
+  it('rechaza un state de otra sesión', () => {
+    const res = mockRes();
+    const state = issueOAuthState(res, cfg, '/inventario/privado');
+    expect(consumeOAuthState(mockReq({}), mockRes(), cfg, state)).toBe('/');
+  });
+
+  it('rechaza un state firmado a mano', () => {
+    const res = mockRes();
+    const state = issueOAuthState(res, cfg, '/inventario/x');
+    const [nonce, encoded] = state.split('.');
+    const forjado = `${nonce}.${encoded}.${'0'.repeat(32)}`;
+    expect(consumeOAuthState(mockReq({ app_session_oauth_state: forjado }), mockRes(), cfg, forjado)).toBe('/');
+  });
+
+  it('no guarda un return_to externo', () => {
+    const res = mockRes();
+    const state = issueOAuthState(res, cfg, 'https://malo.com/robo');
+    expect(consumeOAuthState(mockReq(res.cookies), res, cfg, state)).toBe('/');
   });
 });

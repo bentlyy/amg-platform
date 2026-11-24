@@ -17,7 +17,7 @@ export interface MailResult {
 export async function sendMail(input: { to: string; subject: string; text: string }): Promise<MailResult> {
   if (!platformConfig.smtpHost) {
     logger.warn(`[mail:log] to=${input.to} subject="${input.subject}"`);
-    logger.warn(`[mail:log] ${input.text}`);
+    logger.warn(`[mail:log] ${input.text.replace(/([?&]token=)[^&\s]+/gi, '$1***')}`);
     return { ok: true };
   }
   try {

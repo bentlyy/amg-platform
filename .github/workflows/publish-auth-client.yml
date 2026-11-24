@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
   packages: write
 
 jobs:
@@ -34,3 +34,17 @@ jobs:
         run: npm publish -w @bentlyy/auth-client
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Empaquetar tarball
+        run: npm pack -w @bentlyy/auth-client --pack-destination .
+
+      - name: Adjuntar tarball al release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          VERSION=$(node -p "require('./packages/auth-client/package.json').version")
+          TAG="auth-client-v$VERSION"
+          if ! gh release view "$TAG" >/dev/null 2>&1; then
+            gh release create "$TAG" --title "auth-client v$VERSION" --notes "SDK de identidad AMG para los productos."
+          fi
+          gh release upload "$TAG" bentlyy-auth-client-*.tgz --clobber

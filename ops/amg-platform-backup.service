@@ -8,4 +8,4 @@ Type=oneshot
 User=opc
 Environment=AMG_PLATFORM_ROOT=/home/opc/projects/amg-platform
 Environment=AMG_PLATFORM_BACKUPS=/home/opc/backups/amg-platform
-ExecStart=/bin/bash -lc '"$AMG_PLATFORM_ROOT/ops/backup.sh"'
+ExecStart=/bin/bash -lc 'bash "$AMG_PLATFORM_ROOT/ops/backup.sh"'

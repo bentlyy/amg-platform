@@ -212,6 +212,24 @@ CREATE TABLE IF NOT EXISTS audit_log (
   created_at TEXT NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS prototypes (
+  id TEXT PRIMARY KEY,
+  slug TEXT NOT NULL UNIQUE,
+  name TEXT NOT NULL,
+  client_name TEXT NOT NULL,
+  description TEXT NOT NULL DEFAULT '',
+  file_path TEXT NOT NULL,
+  active INTEGER NOT NULL DEFAULT 1,
+  created_at TEXT NOT NULL,
+  updated_at TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS prototype_access (
+  prototype_id TEXT NOT NULL REFERENCES prototypes(id) ON DELETE CASCADE,
+  organization_id TEXT NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
+  PRIMARY KEY (prototype_id, organization_id)
+);
+
 CREATE UNIQUE INDEX IF NOT EXISTS idx_memberships_unique ON memberships(user_id, organization_id);
 CREATE INDEX IF NOT EXISTS idx_memberships_org ON memberships(organization_id);
 CREATE INDEX IF NOT EXISTS idx_memberships_user ON memberships(user_id);
@@ -225,6 +243,7 @@ CREATE INDEX IF NOT EXISTS idx_sessions_user ON sessions(user_id, status);
 CREATE INDEX IF NOT EXISTS idx_sessions_token ON sessions(token_hash);
 CREATE INDEX IF NOT EXISTS idx_sso_codes_hash ON sso_codes(code_hash);
 CREATE INDEX IF NOT EXISTS idx_audit_org ON audit_log(organization_id, created_at);
+CREATE INDEX IF NOT EXISTS idx_prototype_access_org ON prototype_access(organization_id);
 `;
 
 /**

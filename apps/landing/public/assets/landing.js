@@ -232,7 +232,11 @@
     );
     bindForm(form, function (values) {
       return api('/auth/login', { method: 'POST', body: { email: values.email, password: values.password } });
-    }, function () { location.assign('/'); });
+    }, function () {
+      api('/prototypes').then(function (data) {
+        location.assign(data && data.prototypes && data.prototypes.length ? '/prototipos' : '/');
+      }, function () { location.assign('/'); });
+    });
 
     var cerrar = el('button', { class: 'absolute top-4 right-4 w-9 h-9 grid place-items-center rounded-full text-on-surface-variant hover:bg-surface-container-low transition-colors', type: 'button', 'aria-label': 'Cerrar' },
       el('span', { class: 'material-symbols-outlined text-xl', text: 'close' }));
@@ -296,6 +300,7 @@
 
     sheet.appendChild(opcion('person', 'Mi cuenta', function () { mostrarVista('cuenta'); }));
     sheet.appendChild(opcion('apps', 'Mis aplicaciones', function () { mostrarVista('apps'); }));
+    sheet.appendChild(opcion('layers', 'Prototipos', function () { location.assign('/prototipos'); }));
     sheet.appendChild(el('div', { class: 'my-1 h-px bg-outline-variant/30' }));
     sheet.appendChild(opcion('logout', 'Salir', signOut));
 

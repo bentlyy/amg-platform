@@ -17,6 +17,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const app = createPlatformApp({
   staticDir: join(__dirname, '..', 'public'),
+  prototypeDir: join(__dirname, '..', 'prototipos'),
 });
 
 /**
