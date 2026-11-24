@@ -33,6 +33,7 @@ beforeAll(() => {
   seedCatalog();
   dir = mkdtempSync(path.join(tmpdir(), 'amg-prototipos-'));
   writeFileSync(path.join(dir, 'demo.html'), '<!doctype html><title>Prototype</title><p>visible</p>');
+  writeFileSync(path.join(dir, 'demos.html'), '<!doctype html><body data-page="demos"></body>');
   app = createPlatformApp({ prototypeDir: dir, staticDir: dir });
 });
 
@@ -93,8 +94,9 @@ describe('prototipos privados', () => {
 });
 
 describe('prototipos públicos', () => {
-  it('/demos lleva a la sección pública de la landing', async () => {
-    await request(app).get('/demos').expect(301).expect('Location', '/#demos');
+  it('/demos sirve la vista pública sin sesión', async () => {
+    const res = await request(app).get('/demos').expect(200);
+    expect(res.text).toContain('data-page="demos"');
   });
 
   it('lista y sirve solo los marcados como públicos, sin sesión', async () => {

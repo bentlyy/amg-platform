@@ -374,7 +374,7 @@
       var nav = [
         el('a', { href: '/productos', text: 'Productos', 'aria-current': here === '/productos' || here === '/precios' ? 'page' : null }),
         el('a', { href: '/mis-aplicaciones', text: 'Mis aplicaciones', 'aria-current': here === '/mis-aplicaciones' || here === '/contratar' ? 'page' : null }),
-        el('a', { href: '/#demos', text: 'Demos' }),
+        el('a', { href: '/demos', text: 'Demos', 'aria-current': here === '/demos' ? 'page' : null }),
         el('a', { href: '/contacto', text: 'Contacto', 'aria-current': here === '/contacto' ? 'page' : null }),
       ];
       if (session) {
@@ -1278,7 +1278,6 @@
   function openPrototype(prototype, publicPreview) {
     var backdrop;
     var fullButton;
-    var href = (publicPreview ? '/api/prototypes/public/' : '/api/prototypes/') + encodeURIComponent(prototype.slug) + '/html';
     var onKey = function (event) { if (event.key === 'Escape') closePrototype(); };
     var closePrototype = function () {
       document.removeEventListener('keydown', onKey);
@@ -1295,12 +1294,11 @@
         el('div', { class: 'proto-bar' },
           el('strong', { text: prototype.name }),
           fullButton,
-          el('a', { class: 'btn btn--sm btn--ghost', href: href, target: '_blank', rel: 'noopener noreferrer', text: 'Abrir en pestaña nueva' }),
           el('button', { class: 'btn btn--sm btn--ghost', type: 'button', text: 'Cerrar', onclick: closePrototype }),
         ),
         el('iframe', {
           class: 'proto-frame',
-          src: href,
+          src: (publicPreview ? '/api/prototypes/public/' : '/api/prototypes/') + encodeURIComponent(prototype.slug) + '/html',
           sandbox: 'allow-scripts allow-forms',
           title: 'Vista previa de ' + prototype.name,
         }),
@@ -1327,6 +1325,26 @@
       });
       mount(target, panel('Prototipos en proceso', 'Vistas previas privadas, disponibles solo para tu organización.',
         items.length ? el('div', { class: 'proto-grid' }, cards) : emptyBox('No hay prototipos disponibles para tu organización.')));
+    }).catch(function (err) {
+      mount(target, errorBox(err));
+    });
+  };
+
+  pages.demos = function () {
+    var target = byId('demos');
+    mount(target, skeletons(3));
+    return api('/prototypes/public').then(function (data) {
+      var items = data.prototypes || [];
+      var cards = items.map(function (prototype) {
+        return el('article', { class: 'card stack' },
+          el('span', { class: 'tag', text: prototype.client_name }),
+          el('h2', { text: prototype.name }),
+          prototype.description ? el('p', { class: 'small soft', text: prototype.description }) : null,
+          el('button', { class: 'btn', type: 'button', text: 'Abrir vista previa', onclick: function () { openPrototype(prototype, true); } }),
+        );
+      });
+      mount(target, panel('Demos', 'Proyectos completos disponibles sin iniciar sesión.',
+        items.length ? el('div', { class: 'proto-grid' }, cards) : emptyBox('No hay demos disponibles.')));
     }).catch(function (err) {
       mount(target, errorBox(err));
     });

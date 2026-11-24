@@ -217,6 +217,7 @@ export function createPlatformApp(options: PlatformAppOptions = {}): Express {
     // indexe dos veces la misma pagina y los enlaces internos viejos sigan vivos.
     const publicRedirects: Record<string, string> = {
       '/index.html': '/',
+      '/demos.html': '/demos',
       '/productos.html': '/productos',
       '/sistemas.html': '/sistemas',
       '/soluciones.html': '/soluciones',
@@ -261,7 +262,7 @@ export function createPlatformApp(options: PlatformAppOptions = {}): Express {
     app.get('/', page('index.html'));
     app.get('/productos', page('productos.html'));
     app.get('/precios', page('productos.html'));
-    app.get('/demos', (_req, res) => res.redirect(301, '/#demos'));
+    app.get('/demos', page('demos.html'));
     app.get('/contacto', page('contacto.html'));
     app.get('/privacy', page('privacy.html'));
     app.get('/privacidad', page('privacy.html'));
