@@ -220,6 +220,7 @@ CREATE TABLE IF NOT EXISTS prototypes (
   description TEXT NOT NULL DEFAULT '',
   file_path TEXT NOT NULL,
   active INTEGER NOT NULL DEFAULT 1,
+  public_access INTEGER NOT NULL DEFAULT 0,
   created_at TEXT NOT NULL,
   updated_at TEXT NOT NULL
 );
@@ -276,6 +277,7 @@ const MIGRATIONS: Array<[string, string, string]> = [
   ['payments', 'original_amount', 'INTEGER'],
   ['payments', 'discount_amount', 'INTEGER NOT NULL DEFAULT 0'],
   ['payments', 'discount_code', 'TEXT'],
+  ['prototypes', 'public_access', 'INTEGER NOT NULL DEFAULT 0'],
 ];
 
 export interface CoreDbHandle {

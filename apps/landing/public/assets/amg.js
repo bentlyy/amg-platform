@@ -1274,7 +1274,7 @@
     });
   };
 
-  function openPrototype(prototype) {
+  function openPrototype(prototype, publicPreview) {
     var backdrop;
     var fullButton;
     var onKey = function (event) { if (event.key === 'Escape') closePrototype(); };
@@ -1297,7 +1297,7 @@
         ),
         el('iframe', {
           class: 'proto-frame',
-          src: '/api/prototypes/' + encodeURIComponent(prototype.slug) + '/html',
+          src: (publicPreview ? '/api/prototypes/public/' : '/api/prototypes/') + encodeURIComponent(prototype.slug) + '/html',
           sandbox: 'allow-scripts allow-forms',
           title: 'Vista previa de ' + prototype.name,
         }),
@@ -1349,6 +1349,10 @@
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run);
     else run();
   }
+
+  window.AMGPreview = {
+    open: function (prototype, publicPreview) { openPrototype(prototype, publicPreview); },
+  };
 
   boot();
 })();

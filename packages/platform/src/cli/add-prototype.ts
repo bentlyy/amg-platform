@@ -13,9 +13,10 @@ const name = bandera('name');
 const client = bandera('client');
 const file = bandera('file');
 const orgs = bandera('orgs');
+const publicAccess = process.argv.includes('--public');
 
 if (!slug || !name || !client || !file || !orgs) {
-  console.error('Uso: prototype:add --slug <slug> --name <nombre> --client <cliente> --file <ruta/relativa.html> --orgs <slug1,slug2>');
+  console.error('Uso: prototype:add --slug <slug> --name <nombre> --client <cliente> --file <ruta/relativa.html> --orgs <slug1,slug2> [--public]');
   process.exit(1);
 }
 
@@ -41,6 +42,7 @@ const id = upsertPrototype({
   description: bandera('description') ?? '',
   filePath: file,
   organizationIds,
+  publicAccess,
 });
 
-console.log(`Prototipo ${slug} -> ${id} (${organizationIds.length} organización(es))`);
+console.log(`Prototipo ${slug} -> ${id} (${organizationIds.length} organización(es))${publicAccess ? ' [público]' : ''}`);

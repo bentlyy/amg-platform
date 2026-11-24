@@ -1,7 +1,14 @@
-import { Router } from 'express';
+import { Router, type Response } from 'express';
 import { authRequired } from './middleware.js';
 import { asyncHandler } from '../shared/http.js';
-import { findVisiblePrototype, listVisiblePrototypes, readPrototypeHtml } from '../domain/prototypes.js';
+import {
+  findPublicPrototype,
+  findVisiblePrototype,
+  listPublicPrototypes,
+  listVisiblePrototypes,
+  readPrototypeHtml,
+  type PrototypeRow,
+} from '../domain/prototypes.js';
 
 const PROTOTYPE_CSP = [
   "default-src 'none'",
@@ -14,12 +21,37 @@ const PROTOTYPE_CSP = [
   "frame-ancestors 'self'",
 ].join('; ');
 
+function sendHtml(res: Response, prototype: PrototypeRow, baseDir: string) {
+  const html = readPrototypeHtml(baseDir, prototype.file_path);
+  res.setHeader('Content-Type', 'text/html; charset=utf-8');
+  res.setHeader('Cache-Control', 'private, no-store');
+  res.setHeader('Referrer-Policy', 'no-referrer');
+  res.setHeader('Content-Security-Policy', PROTOTYPE_CSP);
+  return res.send(html);
+}
+
 export function createPrototypesRouter(baseDir: string): Router {
   const router = Router();
-  router.use(authRequired);
+
+  router.get(
+    '/public',
+    asyncHandler(async (_req, res) => {
+      return res.json({ prototypes: listPublicPrototypes() });
+    }),
+  );
+
+  router.get(
+    '/public/:slug/html',
+    asyncHandler(async (req, res) => {
+      const prototype = findPublicPrototype(req.params.slug);
+      if (!prototype) return res.status(404).json({ error: 'Prototipo no encontrado.' });
+      return sendHtml(res, prototype, baseDir);
+    }),
+  );
 
   router.get(
     '/',
+    authRequired,
     asyncHandler(async (req, res) => {
       return res.json({ prototypes: listVisiblePrototypes(req.amg!.organizationId) });
     }),
@@ -27,15 +59,11 @@ export function createPrototypesRouter(baseDir: string): Router {
 
   router.get(
     '/:slug/html',
+    authRequired,
     asyncHandler(async (req, res) => {
       const prototype = findVisiblePrototype(req.params.slug, req.amg!.organizationId);
       if (!prototype) return res.status(404).json({ error: 'Prototipo no encontrado.' });
-      const html = readPrototypeHtml(baseDir, prototype.file_path);
-      res.setHeader('Content-Type', 'text/html; charset=utf-8');
-      res.setHeader('Cache-Control', 'private, no-store');
-      res.setHeader('Referrer-Policy', 'no-referrer');
-      res.setHeader('Content-Security-Policy', PROTOTYPE_CSP);
-      return res.send(html);
+      return sendHtml(res, prototype, baseDir);
     }),
   );
 

@@ -91,3 +91,29 @@ describe('prototipos privados', () => {
     expect(res.body.products.map((p: { slug: string }) => p.slug)).not.toContain('proto-de-a');
   });
 });
+
+describe('prototipos públicos', () => {
+  it('lista y sirve solo los marcados como públicos, sin sesión', async () => {
+    const d = await crearOrg('proto-d@test.cl', 'proto-d');
+    upsertPrototype({
+      slug: 'proto-publico',
+      name: 'Prototipo público',
+      clientName: 'Cliente P',
+      description: '',
+      filePath: 'demo.html',
+      organizationIds: [d.orgId],
+      publicAccess: true,
+    });
+
+    const list = await request(app).get('/api/prototypes/public').expect(200);
+    const slugs = list.body.prototypes.map((p: { slug: string }) => p.slug);
+    expect(slugs).toContain('proto-publico');
+    expect(slugs).not.toContain('proto-de-a');
+
+    const html = await request(app).get('/api/prototypes/public/proto-publico/html').expect(200);
+    expect(html.text).toContain('visible');
+    expect(html.headers['content-security-policy']).toContain("frame-ancestors 'self'");
+
+    await request(app).get('/api/prototypes/public/proto-de-a/html').expect(404);
+  });
+});

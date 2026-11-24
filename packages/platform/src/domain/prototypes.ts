@@ -10,7 +10,7 @@ export interface PrototypeListItem {
   description: string;
 }
 
-interface PrototypeRow extends PrototypeListItem {
+export interface PrototypeRow extends PrototypeListItem {
   id: string;
   file_path: string;
 }
@@ -22,6 +22,7 @@ export interface UpsertPrototypeInput {
   description: string;
   filePath: string;
   organizationIds: string[];
+  publicAccess?: boolean;
 }
 
 export function listVisiblePrototypes(organizationId: string): PrototypeListItem[] {
@@ -47,6 +48,27 @@ export function findVisiblePrototype(slug: string, organizationId: string): Prot
     .get(slug, organizationId) as PrototypeRow | undefined;
 }
 
+export function listPublicPrototypes(): PrototypeListItem[] {
+  return getCoreDb()
+    .sqlite.prepare(
+      `SELECT p.slug, p.name, p.client_name, p.description
+         FROM prototypes p
+        WHERE p.active = 1 AND p.public_access = 1
+        ORDER BY p.client_name, p.name`,
+    )
+    .all() as PrototypeListItem[];
+}
+
+export function findPublicPrototype(slug: string): PrototypeRow | undefined {
+  return getCoreDb()
+    .sqlite.prepare(
+      `SELECT p.id, p.slug, p.name, p.client_name, p.description, p.file_path
+         FROM prototypes p
+        WHERE p.slug = ? AND p.active = 1 AND p.public_access = 1`,
+    )
+    .get(slug) as PrototypeRow | undefined;
+}
+
 export function readPrototypeHtml(baseDir: string, filePath: string): string {
   const root = path.resolve(baseDir);
   const target = path.resolve(root, filePath);
@@ -69,16 +91,17 @@ export function upsertPrototype(input: UpsertPrototypeInput): string {
   const now = new Date().toISOString();
   return db.transaction(() => {
     db.prepare(
-      `INSERT INTO prototypes (id, slug, name, client_name, description, file_path, active, created_at, updated_at)
-       VALUES (?, ?, ?, ?, ?, ?, 1, ?, ?)
+      `INSERT INTO prototypes (id, slug, name, client_name, description, file_path, active, public_access, created_at, updated_at)
+       VALUES (?, ?, ?, ?, ?, ?, 1, ?, ?, ?)
        ON CONFLICT(slug) DO UPDATE SET
          name = excluded.name,
          client_name = excluded.client_name,
          description = excluded.description,
          file_path = excluded.file_path,
          active = 1,
+         public_access = excluded.public_access,
          updated_at = excluded.updated_at`,
-    ).run(createId(), input.slug, input.name.trim(), input.clientName.trim(), input.description.trim(), input.filePath, now, now);
+    ).run(createId(), input.slug, input.name.trim(), input.clientName.trim(), input.description.trim(), input.filePath, input.publicAccess ? 1 : 0, now, now);
     const row = db.prepare('SELECT id FROM prototypes WHERE slug = ?').get(input.slug) as { id: string };
     db.prepare('DELETE FROM prototype_access WHERE prototype_id = ?').run(row.id);
     const grant = db.prepare('INSERT OR IGNORE INTO prototype_access (prototype_id, organization_id) VALUES (?, ?)');
