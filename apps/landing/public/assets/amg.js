@@ -1336,7 +1336,7 @@
       client_name: 'Dispensa Distribuciones',
       name: 'Dispensa - Tienda completa',
       description: 'Prototipo de tienda con carrito y envio gratis',
-      href: '/demos/dispensa.html',
+      href: '/demos/04_tienda_completa.html',
     },
   ];
 
